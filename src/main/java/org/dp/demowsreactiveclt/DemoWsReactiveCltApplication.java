@@ -3,9 +3,12 @@ package org.dp.demowsreactiveclt;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
 
 import java.net.URI;
+import java.util.Base64;
+
 @SpringBootApplication
 public class DemoWsReactiveCltApplication {
     public static void main(String[] args) {
@@ -18,7 +21,12 @@ public class DemoWsReactiveCltApplication {
         ReactorNettyWebSocketClient client = new ReactorNettyWebSocketClient();
         WsReceiverHandler wsReceiverHandler = new WsReceiverHandler();
 
-        client.execute(url, wsReceiverHandler).subscribe();
+        //Auth
+        HttpHeaders httpHeaders = new HttpHeaders(); //TODO клиент не коннектится
+        String auth = "user1" + ":" + "password";
+        httpHeaders.add("Authorization", "Basic " + new String(Base64.getEncoder().encode(auth.getBytes())));
+
+        client.execute(url, httpHeaders, wsReceiverHandler).subscribe();
     }
 
 }
